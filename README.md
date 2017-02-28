@@ -1,4 +1,4 @@
-# validate-testNG-xml
+# validate-testng-reports.xml
 Validate TestNg XML and update it to your needs. For eg, add, remove or update a node.
 
 * The TestNgXMLUpdater program implements an logic that does the below operations:
