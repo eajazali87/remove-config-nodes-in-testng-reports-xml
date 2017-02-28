@@ -34,7 +34,7 @@ public class TestNgXMLUpdater {
     private Document doc;
     TransformerFactory tf = TransformerFactory.newInstance();
     Transformer t = null;
-    String inputFilePath = "/Users/umahaea/Desktop/FebRun.xml"; //Pass your input testng.xml file path.
+    String inputFilePath = "/Users/umahaea/Desktop/testng-results.xml"; //Pass your input testng-results.xml file path.
     String outputFilePath = "/Users/umahaea/Desktop/output.xml"; //Pass file path for your updated testng.xml file.
 
     public TestNgXMLUpdater() throws ParserConfigurationException {
