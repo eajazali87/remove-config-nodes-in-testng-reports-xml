@@ -53,9 +53,9 @@ public class TestNgXMLUpdater {
 
     private void finalTestNgXML(String filepath) throws TransformerException, IOException, SAXException {
         doc = builder.parse(filepath);
-        NodeList nList = doc.getElementsByTagName("test-method");
-        List<Element> removeElements = new LinkedList<Element>(); // List for removing nodes
-        List<Element> retainElements = new LinkedList<Element>(); // List for retaining nodes
+        NodeList nList = doc.getElementsByTagName("test-method"); //Mention the node
+        List<Element> removeElements = new LinkedList<Element>(); // a List for removing nodes
+        List<Element> retainElements = new LinkedList<Element>(); // a List for retaining nodes
 
         /*
          1. Iterate over and find out <test-method> node with attribute name that does not end with "Test" and "status" equals "SKIP"
