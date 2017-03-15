@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * The TestNgXMLUpdater program implements an logic that does the below operations:
  * 1. Remove test-method nodes where status = "Skip"
- * 2. Remove test-method nodes where the name does not end in "Test". This removes things like beforeClass, afterClass, etc.
+ * 2. Remove test-method nodes whose "is-config" attribute value is "true". This removes things like beforeClass, afterClass, setUp etc.
  * 3. In each test-method node, append a unique number [1],[2],[3], etc. to each name attribute. This forces ALM to bring these in a separate tests, otherwise
  * ALM will bring these in as different runs for the same test
  *
@@ -31,7 +31,7 @@ import java.util.List;
 public class TestNgXMLUpdater {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
-    private Document doc;
+    private Document doc = null;
     TransformerFactory tf = TransformerFactory.newInstance();
     Transformer t = null;
     String inputFilePath = "/Users/umahaea/Desktop/testng-results.xml"; //Pass your input testng-results.xml file path.
@@ -58,19 +58,18 @@ public class TestNgXMLUpdater {
         List<Element> retainElements = new LinkedList<Element>(); // a List for retaining nodes
 
         /*
-         1. Iterate over and find out <test-method> node with attribute name that does not end with "Test" and "status" equals "SKIP"
-         2. Iterate over and find out <test-method> node with attribute name that ends with "Test"
+         Iterate over and find out <test-method> node with attribute "is-config" equals "true" or "status" equals "SKIP"
          */
         for (int i = 0; i < nList.getLength(); i++) {
             Element e = (Element) nList.item(i);
-            if (!(e.getAttribute("name").endsWith("Test")) || e.getAttribute("status").equals("SKIP")) { //If you have to remove any node with a unique value, pass it on here
+            if ((e.getAttribute("is-config").equals("true")) || e.getAttribute("status").equals("SKIP")) { //If you have to remove any node with a unique value, pass it on here
                 removeElements.add(e);
             } else {
                 retainElements.add(e); //If you have to retain any node with a unique value, pass it on here with a condition
             }
         }
 
-        // Permanently delete/remove the <test-method> node with attribute name that does not end with "Test" and "status" equals "SKIP"
+        // Permanently delete/remove the <test-method> node with attribute name that does not end with "Test" or "status" equals "SKIP"
         for (Element e : removeElements) {
             e.getParentNode().removeChild(e);
         }
@@ -85,7 +84,7 @@ public class TestNgXMLUpdater {
         }
 
         //If you need to check the final count of <test-method> nodes
-        System.out.println("Total no. of <test-methods> : " + retainElements.size());
+        System.out.println("Total no. of valid <test-methods> : " + retainElements.size());
 
         //Write it to a file the final testng.xml file
         t = tf.newTransformer();
