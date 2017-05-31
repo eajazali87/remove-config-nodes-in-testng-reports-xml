@@ -1,4 +1,5 @@
 import org.testng.annotations.Test;
+import org.testng.reporters.Files;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,8 +13,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +34,8 @@ public class TestNgXMLUpdater {
     private Document doc = null;
     TransformerFactory tf = TransformerFactory.newInstance();
     Transformer t = null;
-    String inputFilePath = "/Users/umahaea/Desktop/testng-results.xml"; //Pass your input testng-results.xml file path.
-    String outputFilePath = "/Users/umahaea/Desktop/output.xml"; //Pass file path for your updated testng-results.xml file.
+    String inputFilePath = "/Users/umahaea/Desktop/line-output.xml"; //Pass your input testng-results.xml file path.
+    String outputFilePath = "/Users/umahaea/Desktop/without-line-output.xml"; //Pass file path for your updated testng-results.xml file.
 
     public TestNgXMLUpdater() throws ParserConfigurationException {
     }
@@ -53,20 +53,26 @@ public class TestNgXMLUpdater {
 
     private void finalTestNgXML(String filepath) throws TransformerException, IOException, SAXException {
         doc = builder.parse(filepath);
-        NodeList nList = doc.getElementsByTagName("test-method"); //Mention the node
+        NodeList testMethodNodeList = doc.getElementsByTagName("test-method"); //Mention the node
+        NodeList lineNodeList = doc.getElementsByTagName("line"); //Mention the node
         List<Element> removeElements = new LinkedList<Element>(); // a List for removing nodes
         List<Element> retainElements = new LinkedList<Element>(); // a List for retaining nodes
 
         /*
          Iterate over and find out <test-method> node with attribute "is-config" equals "true" or "status" equals "SKIP"
          */
-        for (int i = 0; i < nList.getLength(); i++) {
-            Element e = (Element) nList.item(i);
+        for (int i = 0; i < testMethodNodeList.getLength(); i++) {
+            Element e = (Element) testMethodNodeList.item(i);
             if ((e.getAttribute("is-config").equals("true")) || e.getAttribute("status").equals("SKIP")) { //If you have to remove any node with a unique value, pass it on here
                 removeElements.add(e);
             } else {
                 retainElements.add(e); //If you have to retain any node with a unique value, pass it on here with a condition
             }
+        }
+
+        for (int i = 0; i < lineNodeList.getLength(); i++) {
+            Element e = (Element) lineNodeList.item(i);
+            removeElements.add(e);
         }
 
         // Permanently delete/remove the <test-method> node with attribute name that does not end with "Test" or "status" equals "SKIP"
@@ -89,5 +95,20 @@ public class TestNgXMLUpdater {
         //Write it to a file the final testng.xml file
         t = tf.newTransformer();
         t.transform(new DOMSource(doc), new StreamResult(new File(outputFilePath)));
+        String xmlString = trim(outputFilePath);
+        Files.writeFile(xmlString, new File(outputFilePath));
+    }
+
+    public static String trim(String fileName) throws FileNotFoundException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        StringBuffer result = new StringBuffer();
+        try {
+            String line;
+            while ((line = reader.readLine()) != null)
+                result.append(line.replace("\n",""));
+            return result.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
