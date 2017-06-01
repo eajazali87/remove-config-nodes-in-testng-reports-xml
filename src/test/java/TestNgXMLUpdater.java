@@ -34,8 +34,8 @@ public class TestNgXMLUpdater {
     private Document doc = null;
     TransformerFactory tf = TransformerFactory.newInstance();
     Transformer t = null;
-    String inputFilePath = "/Users/umahaea/Desktop/line-output.xml"; //Pass your input testng-results.xml file path.
-    String outputFilePath = "/Users/umahaea/Desktop/without-line-output.xml"; //Pass file path for your updated testng-results.xml file.
+    String inputFilePath = "/Users/umahaea/Desktop/testng-results.xml"; //Pass your input testng-results.xml file path.
+    String outputFilePath = "/Users/umahaea/Desktop/output.xml"; //Pass file path for your updated testng-results.xml file.
 
     public TestNgXMLUpdater() throws ParserConfigurationException {
     }
@@ -95,20 +95,5 @@ public class TestNgXMLUpdater {
         //Write it to a file the final testng.xml file
         t = tf.newTransformer();
         t.transform(new DOMSource(doc), new StreamResult(new File(outputFilePath)));
-        String xmlString = trim(outputFilePath);
-        Files.writeFile(xmlString, new File(outputFilePath));
-    }
-
-    public static String trim(String fileName) throws FileNotFoundException {
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        StringBuffer result = new StringBuffer();
-        try {
-            String line;
-            while ((line = reader.readLine()) != null)
-                result.append(line.replace("\n",""));
-            return result.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
