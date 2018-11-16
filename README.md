@@ -1,5 +1,5 @@
-# modify-testng-reports.xml
-Modify testNg-reports.xml and update it to your needs. For eg, add, remove or update a node.
+# remove-config-nodes-in-testng-reports-xml
+Remove config nodes in testng-reports.xml
 
 * The TestNgXMLUpdater program implements an logic that does the below operations:
  * Remove &lt;test-method&gt; nodes where status = "Skip"
